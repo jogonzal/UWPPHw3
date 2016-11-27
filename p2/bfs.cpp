@@ -78,9 +78,9 @@ void PrintToFileAndConsole(int verticesTotal, int edgesTotal, unsigned long long
 }
 
 void mpiBfs(
-	int *maxLevelGpu,
-	int *vertexCountGpu,
-	int *edgeCountGpu,
+	int *maxLevelMpi,
+	int *vertexCountMpi,
+	int *edgeCountMpi,
 	int edgeCount,
 	int nodeListSize,
 	int *nodeList,
@@ -142,19 +142,19 @@ void mpiBfs(
 		currentLevel++;
 	} while (foundNewLevel >= 1);
 
-	*edgeCountGpu = totalEdges + 1;
-	*vertexCountGpu = totalVertex + 1;
-	*maxLevelGpu = currentLevel - 1;
+	*edgeCountMpi = totalEdges + 1;
+	*vertexCountMpi = totalVertex + 1;
+	*maxLevelMpi = currentLevel - 1;
 	
-	//printf("%d: Done completely edgeCount%d. vertexCount:%d, maxLevel%d\n", rank, *edgeCountGpu, *vertexCountGpu, *maxLevelGpu);
+	//printf("%d: Done completely edgeCount%d. vertexCount:%d, maxLevel%d\n", rank, *edgeCountMpi, *vertexCountMpi, *maxLevelMpi);
 	
-	MPI_Allreduce(MPI_IN_PLACE, edgeCountGpu, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
-	MPI_Allreduce(MPI_IN_PLACE, vertexCountGpu, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
-	MPI_Allreduce(MPI_IN_PLACE, maxLevelGpu, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+	MPI_Allreduce(MPI_IN_PLACE, edgeCountMpi, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(MPI_IN_PLACE, vertexCountMpi, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+	MPI_Allreduce(MPI_IN_PLACE, maxLevelMpi, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
 	
-	*edgeCountGpu += 1;
-	*vertexCountGpu += 1;
-	*maxLevelGpu -= 1;
+	*edgeCountMpi += 1;
+	*vertexCountMpi += 1;
+	*maxLevelMpi -= 1;
 	
 	// Actually, the vertex count is imprecise, as there are multiple race conditions that can arise as part of this processing
 	// To calculate the right number, one of the processees will have to loop through the node list  and find all the nodes that were visited.
@@ -164,15 +164,15 @@ void mpiBfs(
 			trueVertexCount++;
 		}
 	}
-	*vertexCountGpu = trueVertexCount;
-	// printf("%d: Done completely edgeCount%d. vertexCount:%d, maxLevel%d\n", rank, *edgeCountGpu, *vertexCountGpu, *maxLevelGpu);
+	*vertexCountMpi = trueVertexCount;
+	// printf("%d: Done completely edgeCount%d. vertexCount:%d, maxLevel%d\n", rank, *edgeCountMpi, *vertexCountMpi, *maxLevelMpi);
 }
 
 // NOTE: The function below follows the same algorithm proposed in the Readme.md file, but single threaded
 // It only exists as a guide.
-void singleThreadedProposedBfsAlgorithm(int *maxLevelGpu,
-	int *vertexCountGpu,
-	int *edgeCountGpu,
+void singleThreadedProposedBfsAlgorithm(int *maxLevelMpi,
+	int *vertexCountMpi,
+	int *edgeCountMpi,
 	int dim,
 	int nodeListSize,
 	int *nodeList,
@@ -214,9 +214,9 @@ void singleThreadedProposedBfsAlgorithm(int *maxLevelGpu,
 		currentLevel++;
 	} while (foundNewLevel);
 
-	*edgeCountGpu = totalEdges + 1;
-	*vertexCountGpu = totalVertex + 1;
-	*maxLevelGpu = currentLevel - 1;
+	*edgeCountMpi = totalEdges + 1;
+	*vertexCountMpi = totalVertex + 1;
+	*maxLevelMpi = currentLevel - 1;
 }
 
 void printEdge(unsigned long long origin, unsigned long long destination) {
