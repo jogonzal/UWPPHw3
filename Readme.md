@@ -1,0 +1,1 @@
+This homework solves matrix multiply and BFS search in MPI - see makefiles and individual readme.md files for further information.

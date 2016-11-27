@@ -1,4 +1,4 @@
-For each node, initialize a boolean array of whether it has been "touched". The array will be of length 256. Only the root node has the first level set to 1.
+For each node, initialize a integer array of the levels where it has been "touched". The array will be of length 256. Only the root node has the first level set to 1.
 
 We put all the nodes in a big array, and we also put all the edges in a big array.
 
@@ -23,12 +23,12 @@ Edges (note they are bidirectional)
 
 The algorithm is as follows.
 
-In every GPU iteration for each work item, we:
-1. Iterate over the corresponding edges for the work item
+In every MPI iteration for each process, we:
+1. Iterate over the corresponding edges for the process
 2. If the node is visited, visit all of its children (how do you get the children of a node?)
 3. When visiting a child, simply set its level to the next level index (if it hasn't been visited before)
-4. Barriers are used to prevent work items from going rogue into the next iteration
-4. A global variable that is reset every cycle is needed to know whether any new nodes were found in any iteration
+4. Barriers (with MPI_Reduce) are used to prevent process from going rogue into the next iteration
+5. Every loop, we sync all of the node's visited contents
 
 In the example above, after the first iteration, things will look like this:
 
