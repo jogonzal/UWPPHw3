@@ -1,0 +1,2 @@
+Graph vertices: 46836 with total edges 2097152. Reached vertices from 0 is 46814 and max level is 4.
+
